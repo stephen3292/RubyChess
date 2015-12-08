@@ -41,17 +41,57 @@ class Board
 
   def [](pos)
     row,col = pos
-    @grid[row][col]
+    if @grid[row].nil?
+      return nil
+    else
+      @grid[row][col]
+    end
+  end
+
+  def checkmate?
+    false
   end
 
   def in_bounds?(pos)
     pos.all? { |x| x.between?(0, 7) }
   end
 
-  def move(start, end_pos)
-    raise "no piece at start of move" if self[start].nil?
-    raise "piece can't move that way" if self[start].allowable_move?(end_pos)
+  def valid_piece?(pos, color)
+    if self[pos].nil?
+      puts "No piece at that position."
+      sleep(1)
+      return false
+    elsif self[pos].color == color
+      return true
+    end
+    puts "Wrong color piece at that position."
+    sleep(1)
+    return false
+  end
+
+  def valid_move?(piece_pos, end_pos)
+    if self[piece_pos].moves.include?(end_pos)
+      puts "Moving #{self[piece_pos].class} to #{to_cc(end_pos)}."
+      sleep(1)
+      true
+    else
+      puts "Invalid move."
+      sleep(1)
+      false
+    end
+  end
+
+
+  def move(start_pos, end_pos)
     self[end_pos] = self[start_pos]
+    self[end_pos].pos = end_pos
+    self[start_pos] = nil
+  end
+
+  def to_cc(arr)
+    return arr unless arr.count == 2
+    coords = "ABCDEFGH"
+    return "#{coords[arr[0]]}#{arr[1]}"
   end
 
 

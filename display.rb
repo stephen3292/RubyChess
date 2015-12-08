@@ -9,12 +9,14 @@ class Display
   def initialize(board)
     @board = board
     @cursor_pos = [0, 0]
-    @selected = false
+    @selected = nil
   end
 
   def colors_for(i,j)
     if [i, j] == @cursor_pos
       bg = :light_red
+    elsif [i, j] == @selected
+      bg = :green
     elsif (i + j).odd?
       bg = :white
     else
@@ -25,6 +27,11 @@ class Display
 
     { background: bg, color: text_color }
   end
+
+  def select_piece(pos)
+    @selected = pos
+  end
+
 
   def rendered_board
     @board.grid.map.with_index do |row, i|

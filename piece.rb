@@ -25,7 +25,8 @@ class Piece
     [-2,-1]
   ]
 
-  attr_reader :color, :pos
+  attr_reader :color
+  attr_accessor :pos
 
   def initialize(color, pos, board)
     @color = color
@@ -144,7 +145,7 @@ class Pawn < Piece
       possible_move = [pos[0]-1,pos[1]]
       if @board[possible_move].nil? && @board.in_bounds?(possible_move)
         @moves << possible_move
-        @moves << [5, pos[1]] if self.pos[0] == 7 && @board[[5,pos[1]]].nil?
+        @moves << [4, pos[1]] if self.pos[0] == 6 && @board[[4,pos[1]]].nil?
       end
       possible_moves = [[-1,-1],[-1,1]]
       possible_moves.each do |move|
@@ -163,7 +164,7 @@ class Pawn < Piece
       possible_moves = [[1,1],[1,-1]]
       possible_moves.each do |move|
         possible_move = pos.map.with_index {|i,j| i + move[j]}
-        if @board.in_bounds?(possible_move) && !@board[possibl_move].nil?
+        if @board.in_bounds?(possible_move) && !@board[possible_move].nil?
           @moves << possible_move if @board[possible_move].color == :blue
         end
       end
