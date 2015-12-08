@@ -1,6 +1,5 @@
 require_relative 'board'
 require_relative 'display'
-require_relative 'player'
 
 class Game
 
@@ -9,26 +8,28 @@ class Game
     @display = Display.new(@board)
     @current_player = :blue
   end
-  
+
 
   def run
-    until @board.checkmate?
+    until @board.checkmate?(@current_player)
       piece_pos = select_piece
       move_piece(piece_pos)
       next_player!
     end
+    puts "Checkmate! #{@current_player.capitalize} loses."
   end
 
   def select_piece
     piece_pos = nil
     until piece_pos && @board.valid_piece?(piece_pos, @current_player)
       @display.render
+      puts "Check!" if @board.in_check?(@current_player)
       puts "#{@current_player.capitalize}, select a piece."
       piece_pos = @display.get_input
     end
-    if @board[piece_pos].moves.empty?
+    if @board[piece_pos].valid_moves.empty?
       puts "No moves for this piece."
-      sleep(2)
+      sleep(1)
       piece_pos = select_piece
     end
     @display.select_piece(piece_pos)

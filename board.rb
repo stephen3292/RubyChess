@@ -1,34 +1,21 @@
 require_relative 'piece'
+require_relative 'display'
 require 'byebug'
 
 class Board
   attr_accessor :grid
 
-  def initialize
+  def initialize(empty = false)
     @grid = Array.new(8) { Array.new(8) }
-    populate_board
+    populate_board unless empty
   end
 
   def populate_board
-    pieces_major = [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook]
-    pieces_major.each_with_index do |piece, i|
-      case piece
-      when :rook
-        self[[0,i]] = Rook.new(:black, [0,i], self)
-        self[[7,i]] = Rook.new(:blue, [7,i], self)
-      when :knight
-        self[[0,i]] = Knight.new(:black, [0,i], self)
-        self[[7,i]] = Knight.new(:blue, [7,i], self)
-      when :bishop
-        self[[0,i]] = Bishop.new(:black, [0,i], self)
-        self[[7,i]] = Bishop.new(:blue, [7,i], self)
-      when :queen
-        self[[0,i]] = Queen.new(:black, [0,i], self)
-        self[[7,i]] = Queen.new(:blue, [7,i], self)
-      when :king
-        self[[0,i]] = King.new(:black, [0,i], self)
-        self[[7,i]] = King.new(:blue, [7,i], self)
-      end
+    pieces_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+    pieces_classes.each_with_index do |piece_class, i|
+      self[[0,i]] = piece_class.new(:black, [0,i], self)
+      self[[7,i]] = piece_class.new(:blue, [7,i], self)
+
       self[[1,i]] = Pawn.new(:black, [1,i], self)
       self[[6,i]] = Pawn.new(:blue, [6,i], self)
     end
@@ -48,8 +35,13 @@ class Board
     end
   end
 
-  def checkmate?
-    false
+  def checkmate?(color)
+    checkmate = true
+    self.pieces.each do |piece|
+      checkmate = false if piece.color == color && piece.valid_moves.size > 0
+    end
+    return checkmate
+
   end
 
   def in_bounds?(pos)
@@ -70,7 +62,7 @@ class Board
   end
 
   def valid_move?(piece_pos, end_pos)
-    if self[piece_pos].moves.include?(end_pos)
+    if self[piece_pos].valid_moves.include?(end_pos)
       puts "Moving #{self[piece_pos].class} to #{to_cc(end_pos)}."
       sleep(1)
       true
@@ -82,20 +74,21 @@ class Board
   end
 
   def in_check?(color)
-    king_pos = @grid.select do |piece|
-      !(piece.nil?) && piece.is_a?(King) && piece.color == color
-    end
-
-    @grid.each do |square|
-      if square.is_a?(Piece) && square.color != color
-        square.moves.each do |move|
-          return true if move == king_pos
-        end
+    king_pos = []
+    self.pieces.each do |piece|
+      if piece.is_a?(King) && piece.color == color
+        king_pos = piece.pos
       end
     end
+
+    self.pieces.each do |piece|
+      if piece.color != color
+        piece.all_moves.each { |move| return true if move == king_pos }
+      end
+    end
+
     false
   end
-
 
   def move(start_pos, end_pos)
     self[end_pos] = self[start_pos]
@@ -106,8 +99,19 @@ class Board
   def to_cc(arr)
     return arr unless arr.count == 2
     coords = "ABCDEFGH"
-    return "#{coords[arr[0]]}#{arr[1]}"
+    return "#{coords[arr[1]]}#{arr[0] + 1}"
   end
 
+  def dup
+    copy = Board.new(true)
+    self.pieces.each do |piece|
+      copy[piece.pos] = piece.dup(copy)
+    end
+    copy
+  end
+
+  def pieces
+    @grid.flatten.compact
+  end
 
 end

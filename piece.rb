@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'display'
 require 'byebug'
 
 class Piece
@@ -32,19 +33,38 @@ class Piece
     @color = color
     @pos = pos
     @board = board
-    @moves = []
   end
 
   def to_s
     " x "
   end
 
+  def move_into_check?(move)
+    board_copy = @board.dup
+    board_copy.move(@pos, move)
+    # if move == [5,2]
+    #   d = Display.new(board_copy)
+    #   d.render
+    #   puts "this is a copy of the board with #{board_copy.to_cc(@pos)} moved to #{board_copy.to_cc(move)}"
+    #   puts "#{@color} check is #{board_copy.in_check?(@color)}"
+    #   debugger
+    # end
+    if board_copy.in_check?(@color)
+      return true
+    end
+  end
+
+  def dup(new_board)
+    self.class.new(@color, @pos.dup, new_board)
+  end
+
 end
 
 class SlidingPiece < Piece
 
-  def moves
-    @moves = []
+  def all_moves
+
+    all_moves = []
 
     self.deltas.each do |direction|
       move = @pos
@@ -53,9 +73,9 @@ class SlidingPiece < Piece
 
         if @board.in_bounds?(move)
           if @board[move].nil?
-            @moves << move
+            all_moves << move
           elsif @board[move].color != self.color
-            @moves << move
+            all_moves << move
           end
         end
 
@@ -63,7 +83,17 @@ class SlidingPiece < Piece
       end
     end
 
-    @moves
+    all_moves
+
+  end
+
+  def valid_moves
+
+    valid_moves = self.all_moves
+
+    valid_moves.reject! { |move| move_into_check?(move)}
+
+    valid_moves
   end
 
 
@@ -72,17 +102,28 @@ end
 
 class SteppingPiece < Piece
 
-  def moves
-    @moves = []
+  def all_moves
+
+    all_moves= []
 
     self.deltas.each do |direction|
       move = @pos
       move = move.map.with_index { |i,j| i + direction[j] }
       next unless @board.in_bounds?(move)
-      @moves << move if @board[move].nil? || @board[move].color != self.color
+      all_moves << move if @board[move].nil? || @board[move].color != self.color
     end
 
-    @moves
+    all_moves
+  end
+
+
+  def valid_moves
+
+    valid_moves = self.all_moves
+
+    valid_moves.reject! { |move| move_into_check?(move)}
+
+    valid_moves
   end
 
 end
@@ -139,37 +180,49 @@ class King < SteppingPiece
 end
 
 class Pawn < Piece
-  def moves
-    @moves = []
+
+
+  def all_moves 
+    all_moves = []
     if self.color == :blue
       possible_move = [pos[0]-1,pos[1]]
       if @board[possible_move].nil? && @board.in_bounds?(possible_move)
-        @moves << possible_move
-        @moves << [4, pos[1]] if self.pos[0] == 6 && @board[[4,pos[1]]].nil?
+        all_moves << possible_move
+        all_moves << [4, pos[1]] if self.pos[0] == 6 && @board[[4,pos[1]]].nil?
       end
       possible_moves = [[-1,-1],[-1,1]]
       possible_moves.each do |move|
         possible_move = pos.map.with_index {|i,j| i + move[j]}
         if @board.in_bounds?(possible_move) && !@board[possible_move].nil?
-          @moves << possible_move if @board[possible_move].color == :black
+          all_moves << possible_move if @board[possible_move].color == :black
         end
       end
 
     elsif self.color == :black
       possible_move = [pos[0]+1,pos[1]]
       if @board[possible_move].nil? && @board.in_bounds?(possible_move)
-        @moves << possible_move
-        @moves << [3, pos[1]] if self.pos[0] == 1 && @board[[3,pos[1]]].nil?
+        all_moves << possible_move
+        all_moves << [3, pos[1]] if self.pos[0] == 1 && @board[[3,pos[1]]].nil?
       end
       possible_moves = [[1,1],[1,-1]]
       possible_moves.each do |move|
         possible_move = pos.map.with_index {|i,j| i + move[j]}
         if @board.in_bounds?(possible_move) && !@board[possible_move].nil?
-          @moves << possible_move if @board[possible_move].color == :blue
+          all_moves << possible_move if @board[possible_move].color == :blue
         end
       end
     end
-    @moves
+
+    all_moves
+
+  end
+
+  def valid_moves
+
+    valid_moves = self.all_moves
+
+    valid_moves.reject! { |move| move_into_check?(move) }
+    valid_moves
 
   end
 
