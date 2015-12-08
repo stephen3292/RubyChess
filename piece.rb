@@ -134,7 +134,13 @@ class Bishop < SlidingPiece
   end
 
   def to_s
-    " B "
+    case @color
+    when :white
+      symbol = " \u2657 "
+    when :black
+      symbol = " \u265D "
+    end
+    symbol.encode('utf-8')
   end
 
 end
@@ -145,7 +151,14 @@ class Queen < SlidingPiece
   end
 
   def to_s
-    " Q "
+    case @color
+    when :white
+      symbol = " \u2655 "
+    when :black
+      symbol = " \u265B "
+    end
+    symbol.encode('utf-8')
+
   end
 end
 
@@ -155,7 +168,13 @@ class Rook < SlidingPiece
   end
 
   def to_s
-    " R "
+    case @color
+    when :white
+      symbol = " \u2656 "
+    when :black
+      symbol = " \u265C "
+    end
+    symbol.encode('utf-8')
   end
 end
 
@@ -165,7 +184,14 @@ class Knight < SteppingPiece
   end
 
   def to_s
-    " N "
+    case @color
+    when :white
+      symbol = " \u2658 "
+    when :black
+      symbol = " \u265E "
+    end
+    symbol.encode('utf-8')
+
   end
 end
 
@@ -175,16 +201,23 @@ class King < SteppingPiece
   end
 
   def to_s
-    " K "
+    case @color
+    when :white
+      symbol = " \u2654 "
+    when :black
+      symbol = " \u265A "
+    end
+    symbol.encode('utf-8')
+
   end
 end
 
 class Pawn < Piece
 
 
-  def all_moves 
+  def all_moves
     all_moves = []
-    if self.color == :blue
+    if self.color == :white
       possible_move = [pos[0]-1,pos[1]]
       if @board[possible_move].nil? && @board.in_bounds?(possible_move)
         all_moves << possible_move
@@ -208,7 +241,7 @@ class Pawn < Piece
       possible_moves.each do |move|
         possible_move = pos.map.with_index {|i,j| i + move[j]}
         if @board.in_bounds?(possible_move) && !@board[possible_move].nil?
-          all_moves << possible_move if @board[possible_move].color == :blue
+          all_moves << possible_move if @board[possible_move].color == :white
         end
       end
     end
@@ -227,6 +260,12 @@ class Pawn < Piece
   end
 
   def to_s
-    " p "
+    case @color
+    when :white
+      symbol = " \u2659 "
+    when :black
+      symbol = " \u265F "
+    end
+    symbol.encode('utf-8')
   end
 end

@@ -6,7 +6,7 @@ class Game
   def initialize
     @board = Board.new
     @display = Display.new(@board)
-    @current_player = :blue
+    @current_player = :white
   end
 
 
@@ -16,6 +16,7 @@ class Game
       move_piece(piece_pos)
       next_player!
     end
+    @display.render
     puts "Checkmate! #{@current_player.capitalize} loses."
   end
 
@@ -29,7 +30,7 @@ class Game
     end
     if @board[piece_pos].valid_moves.empty?
       puts "No moves for this piece."
-      sleep(1)
+      sleep(0.5)
       piece_pos = select_piece
     end
     @display.select_piece(piece_pos)
@@ -53,10 +54,10 @@ class Game
 
   def next_player!
     # players.reverse!
-    if @current_player == :blue
+    if @current_player == :white
       @current_player = :black
     else
-      @current_player = :blue
+      @current_player = :white
     end
   end
 

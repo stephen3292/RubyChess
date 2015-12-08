@@ -14,10 +14,10 @@ class Board
     pieces_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     pieces_classes.each_with_index do |piece_class, i|
       self[[0,i]] = piece_class.new(:black, [0,i], self)
-      self[[7,i]] = piece_class.new(:blue, [7,i], self)
+      self[[7,i]] = piece_class.new(:white, [7,i], self)
 
       self[[1,i]] = Pawn.new(:black, [1,i], self)
-      self[[6,i]] = Pawn.new(:blue, [6,i], self)
+      self[[6,i]] = Pawn.new(:white, [6,i], self)
     end
   end
 
@@ -51,24 +51,24 @@ class Board
   def valid_piece?(pos, color)
     if self[pos].nil?
       puts "No piece at that position."
-      sleep(1)
+      sleep(0.5)
       return false
     elsif self[pos].color == color
       return true
     end
     puts "Wrong color piece at that position."
-    sleep(1)
+    sleep(0.5)
     return false
   end
 
   def valid_move?(piece_pos, end_pos)
     if self[piece_pos].valid_moves.include?(end_pos)
       puts "Moving #{self[piece_pos].class} to #{to_cc(end_pos)}."
-      sleep(1)
+      sleep(0.5)
       true
     else
       puts "Invalid move."
-      sleep(1)
+      sleep(0.5)
       false
     end
   end

@@ -22,9 +22,11 @@ class Display
     else
       bg = :grey
     end
-    text_color = ( (@board[[i,j]].nil?) ? :white : @board[[i,j]].color )
-
-
+    text_color = :white
+    if !@board[[i,j]].nil?
+      text_color = :blue if @board[[i,j]].color == :white
+      text_color = :black if @board[[i,j]].color == :black
+    end
     { background: bg, color: text_color }
   end
 
