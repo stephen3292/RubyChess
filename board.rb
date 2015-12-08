@@ -81,6 +81,21 @@ class Board
     end
   end
 
+  def in_check?(color)
+    king_pos = @grid.select do |piece|
+      !(piece.nil?) && piece.is_a?(King) && piece.color == color
+    end
+
+    @grid.each do |square|
+      if square.is_a?(Piece) && square.color != color
+        square.moves.each do |move|
+          return true if move == king_pos
+        end
+      end
+    end
+    false
+  end
+
 
   def move(start_pos, end_pos)
     self[end_pos] = self[start_pos]

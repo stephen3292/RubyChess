@@ -9,6 +9,7 @@ class Game
     @display = Display.new(@board)
     @current_player = :blue
   end
+  
 
   def run
     until @board.checkmate?
