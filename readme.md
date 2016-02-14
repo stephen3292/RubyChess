@@ -3,6 +3,11 @@
 * This is a console based chess game written in Ruby. The game features
 four major classes: piece, board, display and game.
 
+
+
+
+
+
 ![screenshot1]
 
 
