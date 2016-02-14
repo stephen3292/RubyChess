@@ -65,14 +65,7 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  # puts "Player 1 name?"
-  # name1 = gets.chomp
-  # puts "Player 2 name?"
-  # name2 = gets.chomp
-  # player1 = Player.new(name1)
-  # player2 = Player.new(name2)
-  #
-  # Game.new([player1, player2]).run
+
 
   Game.new.run
 end

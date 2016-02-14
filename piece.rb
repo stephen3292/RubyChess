@@ -42,13 +42,7 @@ class Piece
   def move_into_check?(move)
     board_copy = @board.dup
     board_copy.move(@pos, move)
-    # if move == [5,2]
-    #   d = Display.new(board_copy)
-    #   d.render
-    #   puts "this is a copy of the board with #{board_copy.to_cc(@pos)} moved to #{board_copy.to_cc(move)}"
-    #   puts "#{@color} check is #{board_copy.in_check?(@color)}"
-    #   debugger
-    # end
+
     if board_copy.in_check?(@color)
       return true
     end
