@@ -4,7 +4,17 @@
 four major classes: piece, board, display and game.
 
 ![screenshot1]
+
+
+
+
+
 ![screenshot2]
+
+
+
+
+
 ![screenshot3]
 
 
