@@ -3,9 +3,9 @@
 * This is a console based chess game written in Ruby. The game features
 four major classes: piece, board, display and game.
 
-
-
-
+## How to begin
+* clone and navigate to repo in terminal
+* on the command line, $ ruby "game.rb"
 
 
 ![screenshot1]
